@@ -895,9 +895,9 @@ architecture we see an x86_64 assembly code.
  # assembly, but before assembling it 
 ```
 
-* - means standard input 
-* -o means write to standard output 
-* -fno-asynchronous-unwind-tables disables special exception 
+* `-` means standard input 
+* `-o` means write to standard output 
+* `-fno-asynchronous-unwind-tables` disables special exception 
   suggest that generates lots of noise like .cfi_offset 
 
 If you do this, then you get a minimal hello world program in 
