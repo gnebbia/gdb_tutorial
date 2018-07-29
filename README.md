@@ -204,37 +204,23 @@ By default the list will be composed by 3 rows where:
 
 For symbol types we have:
 
-[float Table:
 
-+--------------+-----------------------------------------+
-| Symbol Type  |                 Meaning                 |
-+--------------+-----------------------------------------+
-+--------------+-----------------------------------------+
-|      A       |             absolute symbol             |
-+--------------+-----------------------------------------+
-|      B       | in the uninitialized data section (BSS) |
-+--------------+-----------------------------------------+
-|      D       |     in the initialized data section     |
-+--------------+-----------------------------------------+
-|      N       |            debugging symbol             |
-+--------------+-----------------------------------------+
-|      T       |           in the text section           |
-+--------------+-----------------------------------------+
-|      U       |       symbol undefined right now        |
-+--------------+-----------------------------------------+
+| Symbol Table |                 Meaning                 |
+|:------------:|:---------------------------------------:|
+|       A      |             absolute symbol             |
+|       B      | in the uninitialized data section (BSS) |
+|       D      |     in the initialized data section     |
+|       N      |             debugging symbol            |
+|       T      |           in the text section           |
+|       U      |        symbol undefined right now       |
 
 
+We moreover can encounter both "uppercase" or "lowercase" symbols:
 
-We moreover can encounter both "uppercase" or "lowercase" 
-symbols:
+* lowercase symbol is a "local" symbol
+* uppercase symbol is an "external" symbol
 
-```sh
- lowercase symbol is a "local" symbol
-```
-```sh
- uppercase symbol is an "external" symbol
-```
-for a complete list of symbols we do "man nm"
+for a complete list of symbols we do `man nm`.
 
 ### Interesting nm Usage
 
