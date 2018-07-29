@@ -883,18 +883,12 @@ architecture we see an x86_64 assembly code.
  return 0; }\n' | gcc -x c -S - -o - -fno-asynchronous-unwind-tables
 ```
 
-```sh
- -x c 
- # selects C as it cannot be determined otherwise when 
- # getting source code from standard input 
-```
+where:
 
-```sh
- -S 
- # tells the compiler to stop compilation after generating the 
- # assembly, but before assembling it 
-```
-
+* `-x c` selects C as it cannot be determined otherwise when getting 
+  source code from standard input 
+* `-S` tells the compiler to stop compilation after generating the assembly,
+  but before assembling it 
 * `-` means standard input 
 * `-o` means write to standard output 
 * `-fno-asynchronous-unwind-tables` disables special exception 
