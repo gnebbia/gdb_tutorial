@@ -13,42 +13,45 @@ do:
  # opens programName with gdb
 ```
 
-Once we are in GDB we can run the program, once gdb is executed 
-may be:
-
+Once we are in GDB we can run the program by doing: 
 ```sh
  run parameter1 parameter2 
  # in this case we run the program passing the specified parameters
 ```
 
-debugger with debugging symbols will have infos about variables, 
-functions, and many other informations, debug symbols can be part 
-of the binary of can be in a separate file.
+if the program was compiled with the so called "debugging symbols", we will will
+have useful information about variables, functions, and other stuff.
+Debug symbols can either be integral part of the binary file or can be placed 
+in a separate file.
 
 We can disassemble a program by doing:
 
 ```sh
  disassemble main
  # this will disassemble main, an arrow drawn like "=>" will show what EIP
- # is pointing to, so the next instruction which will be executed
+ # is pointing to, so what is the next instruction which will be executed
 ```
 
-we can attach gdb to a running process by running:
-
+we can attach gdb to a running process by doing:
 ```sh
  attach pid
  # attaches GDB to the specified process ID
 ```
 
-if the program crashes we can run:
+we can also attach to an existing process by launching gdb in quiet mode, so
+that the boilerplate initial information does not appear in the output by doing:
+```sh
+gdb -q -p <PID>
+```
 
+if the program crashes we can run:
 ```sh
  backtrace
  # show the current stack, an alias is "bt"
 ```
 
-### Debugging Symbols
 
+### Debugging Symbols
 
 We need to be explicitly mention the intention to create debug 
 symbols at compile time, we have different kind of debug symbol 
@@ -63,121 +66,83 @@ we have two options with gcc in order to compile with debug
 symbols:
 
 * "-g" flag: in order to compile a program with debug symbols 
-  with a format taken from the Operating System
+  with a format taken from the Operating System;
 * "-ggdb" flag: in order to compile a program with GDB specific 
-  debug symbols , these are the best one understood by gdb
+  debug symbols , these are the best one understood by gdb.
 
-so we will do:
-
+In a practical compilation scenario we can include debug symbold by doing:
 ```sh
  gcc -ggdb programName.c -o programName
 ```
+
 ### What Symbol Files tell us ?
 
 
-Debug Files and debug symbols tell us:
+The information provided by debug files and debug symbols can be summarized as
+follows:
 
-```sh
- info on sources 
- # so we will have the source code available, 
- # done with "list 1" or "list", or we can see the source file 
- # name with "info sources"
-```
+- info on **sources**: so we will have the source code available, 
+    done with "list 1" or "list", or we can see the source file 
+    name with "info sources"
+    N.B.: if we rename or delete the source code file/files we won't 
+    be able to list source code
+- info on **functions**: list of functions available with relative name of the source,
+    we can do this with "info functions";
+- info on **(global) variables**: list of variables available, we can do this
+    with "info variables", this will list only global variables;
+    Notice that in order to get info on local variables we have to specify 
+    the scope, we can do this by with "info scope" + tab tab will give us the list
+    of available scopes and we do for example "info scope functionName"
+    or "info scope main".
 
-N.B.: if we rename or delete the source code file/files we won't 
-be able to list source code
-
-```sh
- info on functions 
- # list of functions available with relative name of the source,
- # we can do this with "info functions"
-```
-
-```sh
- info on variables (globals) 
- # list of variables available, we can do this with "info variables",
- # this will list only global variables
-```
-
-Notice that in order to get info on local variables we have to specify 
-the scope, we can do this by with "info scope" + tab tab will give us the list
-of available scopes and we do for example "info scope functionName"
-or "info scope main".
-
-In order to rip of sumbols from a binary and put it in a separate 
+In order to detach (or strip) symbols from a binary file and save them in a separate 
 file we can do:
-
 ```sh
- objcopy --only-keep-debug binaryFile debugFile 
+ objcopy --only-keep-debug <BinaryFile> <OutputDebugFile>
  # we will put debug symbols of the program binaryFile in the file 
  # called debugFile, without deleting them from the binary
 ```
 
-we can add debug symbols to a binary with:
-
+we can attach debug symbols to a binary by doing:
 ```sh
- objcopy --add-gnu-debuglink=debugFile binaryFile 
- # this will add the debug symbol file called "debugFile"
- # to the binary program called "binaryFile"
+ objcopy --add-gnu-debuglink=<InputDebugFile> <BinaryFile>
+ # this will add the debug symbol file called "InputDebugFile"
+ # to the binary program called "BinaryFile"
 ```
 
-we can strip debug symbols from a binary by doing:
-
+we can simply strip debug symbols from a binary by doing:
 ```sh
- strip --strip-debug programName 
- # this will delete debug symbols from programName by deleting them
+ strip --strip-debug <BinaryName> 
+ # this will delete debug symbols from <BinaryName>
 ```
 
-after doing this there are still additional informations that 
-could be used by reverse engineers, we can delete everything 
-which is unnecessary by doing:
+Anyway, remember that also after doing this removal operation there will still
+be additional informations that can be used by reverse engineers.
 
+We can delete everything which is unnecessary by doing:
 ```sh
- strip --strip-debug --strip-unneeded programName
+ strip --strip-debug --strip-unneeded <ProgramName>
  #this will delete all the debug symbols, we won't see even the function names
 ```
 
-so in order to not let other view my code and make harder the 
-life of reverse engineers we can use the second strip command, 
-this will even keep the binary smaller.
+so in order to not let other view my code and make the 
+life of reverse engineers harder we can use the second strip command, 
+this will also make the binary smaller.
 
 So summarizing with debugging symbols we can:
+- `list 1`, list source code
+- `info sources`, list information on the source file, such as name, and possibly other informations
+- `info functions`, list functions
+- `info variables`, list flobal variables
+- `info scope <FunctionName>`, list local variables in the specified function
+- `info files`, lists all the sections and their addresses, like ".text", ".bss", ".data", etc...
 
-```sh
- list 1 
- # list source code
-```
-```sh
- info sources
- # list information on the source file, such as name, and possibly
- # other informations
-```
 
-```sh
- info functions 
- # list functions
-```
 
-```sh
- info variables 
- # list flobal variables
-```
-
-```sh
- info scope functionName 
- # list local variables in the specified function
-```
-
-```sh
- info files
- # lists all the sections and their addresses, 
- # like ".text", ".bss", ".data", etc...
-```
 #### Loading a symbol file in GDB
 
 
 In order to load a symbol file in GDB we do:
-
 ```sh
  symbol-file fileName 
  # this command inside gdb will load the symbol file called "fileName"
@@ -185,19 +150,18 @@ In order to load a symbol file in GDB we do:
 
 ## Inspecting Symbols with "nm"
 
-The program "nm" will list symbols from an object file, so we can 
-do for example:
-
+The program "nm" will list symbols contained in an object file, so we can 
+inspect symbols related to a file by doing:
 ```sh
  nm ./programName 
- # this will list all the symbol file
+ # this will list all the symbols of the program "programName"
 ```
 
 By default the list will be composed by 3 rows where:
 
-1. the first one is the virtual address
-2. the second one will denote the symbol type
-3. the third one will denote the symbol name
+1. the first, represents the virtual address;
+2. the second, denotes the symbol type;
+3. the third, denotes the symbol name.
 
 
 ### Symbol Types
@@ -222,8 +186,7 @@ We moreover can encounter both "uppercase" or "lowercase" symbols:
 
 for a complete list of symbols we do `man nm`.
 
-### Interesting nm Usage
-
+### Other nm examples
 
 ```sh
  nm -a | grep functionName
@@ -245,7 +208,9 @@ for a complete list of symbols we do `man nm`.
  nm -S #displays the size of the corresponding object for each 
   symbol
 ```
-## Strace Usage
+
+
+## Strace
 
 The "strace" tool will help us understand how our program 
 interacts with the OS, this tool traces all system calls made by 
