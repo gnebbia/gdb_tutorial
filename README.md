@@ -1,13 +1,15 @@
 # GDB Tutorial
 
-## Intro
+## Introduction
 
-Debuggins is the art and science of finding and eliminating bugs 
-in software, bugs can be simple functional issues or can have 
-security implications. When we compile a program automatically we 
-have no debugging symbols, in order to open a program with gdb we 
-do:
+Debugging is the art and science of finding and eliminating bugs 
+in software. Bugs can be simple functional issues or in some cases have 
+security implications.
+gdb is a famous debugger included in many UNIX or UNIX-like systems.
+Let's see in these notes, how to use gdb properly in order to effectively debug
+software.
 
+In order to open a program with gdb we do:
 ```sh
  gdb ./programName
  # opens programName with gdb
